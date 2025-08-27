@@ -1,7 +1,7 @@
 from datetime import datetime
 from symtable import Class
 
-from sqlalchemy import DATETIME, DateTime, ForeignKey, Table, Column
+from sqlalchemy import DATETIME, DateTime, ForeignKey, Table, Column, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
 
 
@@ -24,8 +24,17 @@ class User(Base):
     __tablename__ = "users"
     name: Mapped[str]
     photo_url: Mapped[str]
+    tg_id: Mapped[str]
     events: Mapped[list["Event"]] = relationship(
         "Event", secondary=user_event_table, back_populates="users"
+    )
+    suggestion_sent: Mapped[list["Suggestion"]] = relationship(
+        "Suggestion", foreign_keys=["Suggestion.from_user_id"], back_populates="to_user"
+    )
+    suggestion_received: Mapped[list["Suggestion"]] = relationship(
+        "Suggestion",
+        foreign_keys=["Suggestion.from_user_id"],
+        back_populates="from_user",
     )
 
 
@@ -38,7 +47,8 @@ class Subject(Base):
 class Event(Base):
     __tablename__ = "events"
     name: Mapped[str]
-    date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow())
+    date: Mapped[datetime]
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id"))
     subject: Mapped["Subject"] = relationship("Subject", back_populates="events")
     users: Mapped[list["User"]] = relationship(
@@ -48,3 +58,14 @@ class Event(Base):
 
 class Suggestion(Base):
     __tablename__ = "suggestions"
+    from_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    to_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    to_user: Mapped["User"] = relationship(
+        "User", foreign_keys=[to_user_id], back_populates="suggestions_sent"
+    )
+    from_user: Mapped["User"] = relationship(
+        "User", foreign_keys=[from_user_id], back_populates="suggestions_received"
+    )
+    text: Mapped[str] = mapped_column(String(255))
+    state: Mapped[str]
+    tg_id: Mapped[str]
