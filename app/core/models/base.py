@@ -44,3 +44,7 @@ class Event(Base):
     users: Mapped[list["User"]] = relationship(
         "User", secondary=user_event_table, back_populates="events"
     )
+
+
+class Suggestion(Base):
+    __tablename__ = "suggestions"
