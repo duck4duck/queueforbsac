@@ -12,7 +12,7 @@ class RunConfig(BaseModel):
 
 
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn
+    url: str
     user: str
     password: str
     pgadmin_email: str
@@ -24,11 +24,11 @@ class DatabaseConfig(BaseModel):
 
 
 class Settings(BaseSettings):
-    model_settings: ClassVar[SettingsConfigDict] = SettingsConfigDict(
-        env_file=".env",
-        env_nested_delimiter="__",
-        env_file_encoding="utf-8",
+    db: DatabaseConfig
+    model_config = SettingsConfigDict(
+        env_file=(".env.template", ".env"),
         case_sensitive=False,
+        env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",
     )
     run: RunConfig = RunConfig()
@@ -36,4 +36,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-print(settings)

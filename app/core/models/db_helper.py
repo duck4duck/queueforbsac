@@ -22,16 +22,16 @@ class DatabaseHelper:
             bind=self.engine, autocommit=False, expire_on_commit=False, autoflush=False
         )
 
-        async def dispose(self):
-            await self.engine.dispose()
+    async def dispose(self):
+        await self.engine.dispose()
 
-        async def get_session(self):
-            async with self.session_factory() as session:
-                yield session
+    async def get_session(self):
+        async with self.session_factory() as session:
+            yield session
 
 
 db_helper = DatabaseHelper(
-    str(settings.db.url),
+    settings.db.url,
     echo=settings.db.echo,
     echo_pool=settings.db.echo_pool,
     max_overflow=settings.db.max_overflow,

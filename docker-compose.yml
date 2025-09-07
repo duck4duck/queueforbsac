@@ -1,19 +1,19 @@
-version: "3.9"
+
 
 services:
   pg:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${DB__DB_URL}
-      POSTGRES_USER: ${DB__DB_USER}
-      POSTGRES_PASSWORD: ${DB__DB_PASSWORD}
+      POSTGRES_DB: queue
+      POSTGRES_USER: ${APP_CONFIG__DB__USER}
+      POSTGRES_PASSWORD: ${APP_CONFIG__DB__PASSWORD}
       PGDATA: /var/lib/postgresql/data
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB__DB_USER} -d ${DB__DB_PASSWORD}"]
+      test: ["CMD-SHELL", "pg_isready -U ${APP_CONFIG__DB__USER} -d ${APP_CONFIG__DB__PASSWORD}"]
       interval: 5s
       timeout: 3s
       retries: 3
@@ -21,8 +21,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${DB__PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${DB__PGADMIN_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${APP_CONFIG__DB__PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${APP_CONFIG__DB__PGADMIN_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
       - "5050:80"  # открывать pgAdmin по http://localhost:5050

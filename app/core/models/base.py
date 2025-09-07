@@ -29,11 +29,11 @@ class User(Base):
         "Event", secondary=user_event_table, back_populates="users"
     )
     suggestion_sent: Mapped[list["Suggestion"]] = relationship(
-        "Suggestion", foreign_keys=["Suggestion.from_user_id"], back_populates="to_user"
+        "Suggestion", foreign_keys="Suggestion.from_user_id", back_populates="to_user"
     )
     suggestion_received: Mapped[list["Suggestion"]] = relationship(
         "Suggestion",
-        foreign_keys=["Suggestion.from_user_id"],
+        foreign_keys="Suggestion.from_user_id",
         back_populates="from_user",
     )
 
@@ -69,3 +69,4 @@ class Suggestion(Base):
     text: Mapped[str] = mapped_column(String(255))
     state: Mapped[str]
     tg_id: Mapped[str]
+    event_id: Mapped[int] = mapped_column(ForeignKey("events.id"))
