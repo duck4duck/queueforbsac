@@ -1,8 +1,4 @@
-import os
-from pathlib import Path
-from typing import ClassVar
-
-from pydantic import BaseModel, PostgresDsn
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
