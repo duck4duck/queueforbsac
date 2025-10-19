@@ -1,7 +1,7 @@
 from datetime import datetime
 from symtable import Class
 
-from sqlalchemy import DATETIME, DateTime, ForeignKey, Table, Column, String
+from sqlalchemy import DATETIME, DateTime, ForeignKey, Table, Column, String, Integer
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
 
 
@@ -17,6 +17,7 @@ user_event_table = Table(
     Base.metadata,
     Column("user_id", ForeignKey("users.id")),
     Column("event_id", ForeignKey("events.id")),
+    Column("number_of_positions", Integer),
 )
 
 
