@@ -10,7 +10,9 @@ from app.core.api.crud.validation import data_validate
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
+        self.event_subscribers: dict[str, set[WebSocket]] = {}
+        self.websocket_to_user_id: dict[WebSocket, str] = {}
+        self.user_id_to_websocket: dict[str, WebSocket] = {}
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -28,10 +30,8 @@ ws_router = APIRouter()
 
 manager = ConnectionManager()
 
-
-users: dict[str, List[str]] = {}
-
 all_queues: dict[str, List[Any]] = {}
+users: dict[str, dict[str, str]] = {}
 
 
 @ws_router.websocket("/ws/queue")
