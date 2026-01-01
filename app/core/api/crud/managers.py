@@ -10,6 +10,7 @@ from app.core.api.crud.validation import data_validate
 
 class ConnectionManager:
     def __init__(self):
+        self.active_connections = []
         self.event_subscribers: dict[str, set[WebSocket]] = {}
         self.websocket_to_user_id: dict[WebSocket, str] = {}
         self.user_id_to_websocket: dict[str, WebSocket] = {}
@@ -31,7 +32,6 @@ ws_router = APIRouter()
 manager = ConnectionManager()
 
 all_queues: dict[str, List[Any]] = {}
-users: dict[str, dict[str, str]] = {}
 
 
 @ws_router.websocket("/ws/queue")
@@ -48,7 +48,6 @@ async def ws_endpoint(websocket: WebSocket):
                 if data.id in all_queues[data.event]:
                     raise Exception(f"Duplicate event '{data.event}'")
                 all_queues[data.event].append(data.id)
-            print(all_queues)
             new_data = data.model_dump()
             new_data["queue"] = all_queues[data.event]
             await websocket.send_text(json.dumps(new_data))
